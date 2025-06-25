@@ -1,0 +1,49 @@
+{# templates/partials/sidebar.html #}
+{% load static %}
+<nav class="flex-1 flex flex-col space-y-4 text-base">
+  {% if request.user.role == 'admin' %}
+    <a href="{% url 'role_redirect' %}" class="flex items-center gap-3 hover:text-primary">
+      <i class="fas fa-cog text-primary"></i>
+      <span class="sidebar-label">Admin Dashboard</span>
+    </a>
+    <a href="{% url 'profile_update' %}" class="flex items-center gap-3 hover:text-primary">
+      <i class="fas fa-user-edit text-primary"></i>
+      <span class="sidebar-label">Edit Profile</span>
+    </a>
+  {% elif request.user.role == 'staff' %}
+    <a href="{% url 'role_redirect' %}" class="flex items-center gap-3 hover:text-primary">
+      <i class="fas fa-chalkboard-teacher text-primary"></i>
+      <span class="sidebar-label">Staff Dashboard</span>
+    </a>
+    <a href="{% url 'profile_update' %}" class="flex items-center gap-3 hover:text-primary">
+      <i class="fas fa-user-edit text-primary"></i>
+      <span class="sidebar-label">Edit Profile</span>
+    </a>
+  {% elif request.user.role == 'student' %}
+    <a href="{% url 'role_redirect' %}" class="flex items-center gap-3 hover:text-primary">
+      <i class="fas fa-home text-primary"></i>
+      <span class="sidebar-label">Student Dashboard</span>
+    </a>
+    <a href="{% url 'profile_update' %}" class="flex items-center gap-3 hover:text-primary">
+      <i class="fas fa-user-edit text-primary"></i>
+      <span class="sidebar-label">Edit Profile</span>
+    </a>
+  {% else %}
+    <a href="{% url 'role_redirect' %}" class="flex items-center gap-3 hover:text-primary">
+      <i class="fas fa-home text-primary"></i>
+      <span class="sidebar-label">Dashboard</span>
+    </a>
+    <a href="{% url 'profile_update' %}" class="flex items-center gap-3 hover:text-primary">
+      <i class="fas fa-user-edit text-primary"></i>
+      <span class="sidebar-label">Edit Profile</span>
+    </a>
+  {% endif %}
+</nav>
+
+<!-- Global Logout -->
+<div class="mt-auto pt-6 border-t border-gray-200 dark:border-gray-700">
+    <a href="{% url 'logout' %}" class="flex items-center gap-3 text-red-500 hover:text-red-700">
+        <i class="fas fa-sign-out-alt"></i>
+        <span class="sidebar-label">Logout</span>
+    </a>
+</div>

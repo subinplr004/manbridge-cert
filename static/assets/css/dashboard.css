@@ -1,0 +1,70 @@
+/* dashboard.css */
+
+/* Base colors (Tailwind handles most, just extras here) */
+body {
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Sidebar collapse on desktop */
+body.collapsed #sidebar {
+  width: 5rem;/* Off-canvas sidebar on mobile */
+@media (max-width: 767px) {
+  #sidebar {
+    transform: translateX(-100%);
+  }
+  #sidebar.visible {
+    transform: translateX(0);
+  }
+  #main {
+    margin-left: 0 !important;
+  }
+}
+
+/* Collapse on desktop */
+@media (min-width: 768px) {
+  body.collapsed #sidebar {
+    width: 4rem;
+  }
+  body.collapsed .logo-text,
+  body.collapsed .sidebar-label {
+    display: none;
+  }
+  #main {
+    margin-left: 16rem;
+  }
+  body.collapsed #main {
+    margin-left: 4rem;
+  }
+}
+
+}
+body.collapsed .logo-text,
+body.collapsed .sidebar-label {
+  display: none;
+}
+
+/* Main content margin for desktop */
+@media (min-width: 768px) {
+  #main {
+    margin-left: 16rem;
+    transition: margin-left 0.3s ease;
+  }
+  body.collapsed #main {
+    margin-left: 5rem;
+  }
+}
+
+/* Off-canvas sidebar on mobile */
+@media (max-width: 767px) {
+  #sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+  #sidebar.visible {
+    transform: translateX(0);
+  }
+  #main {
+    margin-left: 0 !important;
+  }
+}
+

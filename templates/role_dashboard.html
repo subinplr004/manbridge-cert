@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}{{ request.user.role|title }} Dashboard - Manbridge{% endblock %}
+
+{% block heading %}
+<div class="flex items-center justify-between w-full">
+  <h2 class="text-3xl font-semibold dark:text-white">Welcome {{ request.user.role|title }}</h2>
+  <!-- Sidebar toggle for desktop & mobile -->
+  <button onclick="toggleSidebar()"
+          class="md:inline-flex hidden items-center justify-center p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded focus:outline-none">
+    <i class="fas fa-bars fa-lg"></i>
+  </button>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="text-lg text-center">
+    {% if request.user.role == "admin" %}
+        <p>Manage the institution's settings and users here.</p>
+    {% elif request.user.role == "certificate_issuer" %}
+        <p>Issue and manage certificates here.</p>
+    {% elif request.user.role == "staff" %}
+        <p>You can manage students and attendance here.</p>
+    {% elif request.user.role == "sales" %}
+        <p>Track and manage leads and admissions here.</p>
+    {% elif request.user.role == "front_office" %}
+        <p>Coordinate inquiries and walk-ins from this panel.</p>
+    {% elif request.user.role == "student" %}
+        <p>View your results, profile, and updates here.</p>
+    {% else %}
+        <p>This dashboard is tailored to your assigned role.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Manbridge{% endblock %}</title>
+
+  <!-- Tailwind + Custom CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { colors: { primary:'#4F46E5', dark:'#1F2937', light:'#F9FAFB' } } }
+    }
+  </script>
+  <link href="{% static 'assets/css/dashboard.css' %}" rel="stylesheet">
+</head>
+<body class="bg-light dark:bg-gray-900 text-gray-800 dark:text-white flex min-h-screen">
+
+  <!-- Sidebar -->
+<aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 shadow-lg p-5
+                            transform transition-transform duration-300 overflow-y-auto">
+  <div class="flex items-center justify-between mb-8 relative">
+    <div class="flex items-center gap-2">
+      <img src="{% static 'assets/images/manbridge_logo.png' %}" alt="Logo" class="h-10">
+      <span class="logo-text text-xl font-semibold">Manbridge</span>
+    </div>
+    <!-- Desktop toggle: visible at md+ -->
+    <button onclick="toggleSidebar()"
+            class="hidden md:inline-flex items-center justify-center p-2 rounded 
+                   text-gray-600 dark:text-gray-300 focus:outline-none">
+      <i class="fas fa-bars fa-lg"></i>
+    </button>
+  </div>
+  {% include "partials/sidebar.html" %}
+</aside>
+
+  <!-- Mobile toggle (md-) -->
+<div class="fixed top-4 left-4 z-50 md:hidden">
+  <button onclick="toggleSidebar()"
+          class="bg-primary text-white p-2 rounded shadow focus:outline-none">
+    <i class="fas fa-bars fa-lg"></i>
+  </button>
+</div>
+
+
+  <!-- Dark-mode toggle -->
+  <div class="fixed top-4 right-4 z-50">
+    <button onclick="toggleDarkMode()"
+            class="bg-gray-300 dark:bg-gray-700 p-2 rounded shadow">
+      <i class="fas fa-moon"></i>
+    </button>
+  </div>
+
+  <!-- Main content -->
+  <main id="main" class="flex-1 p-6 md:ml-64 transition-all duration-300">
+    <div class="flex justify-center mb-6">
+      <h2 class="text-3xl font-semibold dark:text-white">{% block heading %}Dashboard{% endblock %}</h2>
+    </div>
+    <div class="flex justify-center">
+      <div class="w-full max-w-2xl bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
+        {% block content %}{% endblock %}
+      </div>
+    </div>
+  </main>
+
+  <!-- Scripts -->
+  <script src="{% static 'assets/js/dashboard.js' %}"></script>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+  <script>
+    // Load saved theme
+    if (localStorage.getItem('theme') === 'dark') {
+      document.documentElement.classList.add('dark')
+    }
+  </script>
+</body>
+</html>
