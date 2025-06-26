@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import ProfileUpdateForm
+from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.hashers import make_password
 import os
 
@@ -24,30 +25,24 @@ def login_redirect(request):
 
 
 def custom_login(request):
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
+    # Only accept POST here – any GET or other method goes back to landing
+    if request.method != "POST":
+        return redirect("landing")
 
-        if user:
-            # Optional: Check if profile picture exists
-            if user.profile_pic:
-                try:
-                    if not user.profile_pic.storage.exists(user.profile_pic.name):
-                        user.profile_pic = None
-                        user.save()
-                except Exception:
-                    user.profile_pic = None
-                    user.save()
+    # Grab credentials from the POST body
+    username = request.POST.get("username")
+    password = request.POST.get("password")
 
-            login(request, user)
-            return redirect('role_redirect')
-        else:
-            messages.error(request, 'Invalid credentials.')
-            return redirect('login')
-
-    return render(request, 'user_acc/login.html')
-
+    # Try to authenticate the user
+    user = authenticate(request, username=username, password=password)
+    if user is not None:
+        # Log them in and send to the correct dashboard
+        login(request, user)
+        return redirect("role_redirect")
+    else:
+        # Bad creds → flash an error and go back to the landing page
+        messages.error(request, "Invalid username or password")
+        return redirect("landing")
 
 def custom_logout(request):
     logout(request)
@@ -56,26 +51,22 @@ def custom_logout(request):
 
 @login_required
 def profile_update(request):
-    user = request.user
-
-    # Safety check for broken profile picture
-    if user.profile_pic and not user.profile_pic.storage.exists(user.profile_pic.name):
-        user.profile_pic = None
-        user.save()
-
-    if request.method == 'POST':
-        form = ProfileUpdateForm(request.POST, request.FILES, instance=user)
+    if request.method == "POST":
+        form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
-            profile = form.save(commit=False)
-            if form.cleaned_data['password']:
-                profile.password = make_password(form.cleaned_data['password'])
-            profile.save()
-            messages.success(request, "Profile updated successfully!")
-            return redirect('profile_update')
-    else:
-        form = ProfileUpdateForm(instance=user)
+            # Save the updated profile (and password if provided)
+            form.save()
 
-    return render(request, 'user_acc/profile_update.html', {'form': form})
+            # Notify them, then log out
+            messages.success(request, "Profile updated — please log in again.")
+            logout(request)
+
+            # Redirect to your login page
+            return redirect("login")
+    else:
+        form = ProfileUpdateForm(instance=request.user)
+
+    return render(request, "user_acc/profile_update.html", {"form": form})
 
 
 @login_required

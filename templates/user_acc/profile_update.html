@@ -1,22 +1,48 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Update Profile</title>
-</head>
-<body>
-    <h2>Update Profile</h2>
-    {% if messages %}
-        {% for message in messages %}
-            <p style="color: green;">{{ message }}</p>
-        {% endfor %}
-    {% endif %}
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Update</button>
-    </form>
-    <br>
-    <a href="{% url 'logout' %}">Logout</a>
-    <a href="{% url 'role_redirect' %}">Back to Dashboard</a>
-</body>
-</html>
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}Update Profile – Manbridge{% endblock %}
+
+{% block heading %}
+  <div class="flex items-center justify-between w-full">
+    <h2 class="text-3xl font-semibold dark:text-white">Update Profile</h2>
+    <button onclick="toggleSidebar()"
+            class="md:inline-flex hidden items-center justify-center p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded focus:outline-none">
+      <i class="fas fa-bars fa-lg"></i>
+    </button>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <form method="post" enctype="multipart/form-data" class="space-y-4">
+    {% csrf_token %}
+    <div>
+      {{ form.first_name.label_tag }}
+      {{ form.first_name|add_class:"w-full border rounded p-2" }}
+    </div>
+    <div>
+      {{ form.last_name.label_tag }}
+      {{ form.last_name|add_class:"w-full border rounded p-2" }}
+    </div>
+    <div>
+      {{ form.email.label_tag }}
+      {{ form.email|add_class:"w-full border rounded p-2" }}
+    </div>
+    <div>
+      {{ form.profile_pic.label_tag }}
+      {{ form.profile_pic }}
+    </div>
+    <div>
+      {{ form.password.label_tag }}
+      {{ form.password|add_class:"w-full border rounded p-2" }}
+    </div>
+    <button type="submit"
+            class="bg-primary text-white px-4 py-2 rounded shadow">
+      Save Changes
+    </button>
+    <a href="{% url 'role_redirect' %}" class="ml-4 text-sm text-gray-500 hover:underline">
+      Back to Dashboard
+    </a>
+  </form>
+{% endblock %}

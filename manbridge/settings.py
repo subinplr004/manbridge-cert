@@ -32,19 +32,22 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'user_acc',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'main_admin',
+    "widget_tweaks",
+    'admin_panel',
     'certificate',
     'core',
     'staff',
     'student',
-    'user_acc',
+    
 ]
+AUTH_USER_MODEL = "user_acc.CustomUser"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -142,10 +145,20 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'user_acc.CustomUser'
-
-AUTH_USER_MODEL = 'user_acc.CustomUser'
-
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'role_redirect'
 LOGOUT_REDIRECT_URL = 'login'
+
+PASSWORD_RESET_FORM_CLASS = "user_acc.forms.MyPasswordResetForm"
+
+# For development: prints emails to the console
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+# In production, switch to SMTP or an external service:
+# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# EMAIL_HOST      = "smtp.gmail.com"
+# EMAIL_PORT      = 587
+# EMAIL_HOST_USER = "your@address.com"
+# EMAIL_HOST_PASSWORD = "your-password"
+# EMAIL_USE_TLS   = True
+

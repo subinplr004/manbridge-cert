@@ -6,8 +6,8 @@ urlpatterns = [
     path('logout/', views.custom_logout, name='logout'),
     path('role-redirect/', views.role_redirect, name='role_redirect'),
     path('profile-update/', views.profile_update, name='profile_update'),
+    
 
-    path('role-redirect/', views.role_redirect, name='role_redirect'),
     # # Dummy Dashboards
     # path('admin/dashboard/', views.dummy_view, name='admin_dashboard'),
     # path('certificate/dashboard/', views.dummy_view, name='certificate_dashboard'),

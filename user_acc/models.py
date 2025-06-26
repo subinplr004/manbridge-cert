@@ -18,41 +18,62 @@ class CustomUser(AbstractUser):
         upload_to='profiles/',
         blank=True,
         null=True,
-        default='profiles/default-user.png'
+        default='default-user.png'
     )
 
     def save(self, *args, **kwargs):
-        # 1) First save so file exists
+        # If we're only updating last_login (or any other field
+        # but profile_pic), skip all the image logic:
+        update_fields = kwargs.get('update_fields', None)
+        if update_fields is not None and 'profile_pic' not in update_fields:
+            return super().save(*args, **kwargs)
+
+        # 1) Persist instance so file exists
         super().save(*args, **kwargs)
 
-        # 2) Don't process the default placeholder
-        if not self.profile_pic or self.profile_pic.name == 'profiles/default-user.png':
+        # 2) Skip if no pic or it's the default
+        default_name = 'default-user.png'
+        if not self.profile_pic or self.profile_pic.name == default_name:
             return
 
-        # Try to open via filesystem; fall back to storage
+        # 3) If the file truly doesn’t exist, reset to default:
+        storage = self.profile_pic.storage
+        if not storage.exists(self.profile_pic.name):
+            self.profile_pic = default_name
+            super().save(update_fields=['profile_pic'])
+            return
+
+        # 4) Load image
         try:
             img = Image.open(self.profile_pic.path)
-        except (AttributeError, ValueError, OSError):
-            self.profile_pic.open()
-            img = Image.open(self.profile_pic)
+        except Exception:
+            try:
+                img = Image.open(self.profile_pic.open())
+            except Exception:
+                # broken file → reset and bail
+                self.profile_pic = default_name
+                super().save(update_fields=['profile_pic'])
+                return
 
-        # 3) Only resize if larger than our max
+        # 5) Resize if needed
         max_size = (500, 500)
         if img.width > max_size[0] or img.height > max_size[1]:
-            img.thumbnail(max_size, Image.ANTIALIAS)
+            try:
+                resample = Image.Resampling.LANCZOS
+            except AttributeError:
+                resample = Image.LANCZOS
 
-            buffer = BytesIO()
-            img.save(buffer, format='JPEG', quality=70)
-            buffer.seek(0)
+            img.thumbnail(max_size, resample)
 
-            # 4) Overwrite the file in-place (no extra DB save yet)
+            buf = BytesIO()
+            img.save(buf, format='JPEG', quality=70)
+            buf.seek(0)
+
             self.profile_pic.save(
                 self.profile_pic.name,
-                ContentFile(buffer.read()),
+                ContentFile(buf.read()),
                 save=False
             )
-
-            # 5) Persist the updated image field
             super().save(update_fields=['profile_pic'])
 
     def __str__(self):
