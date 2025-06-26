@@ -1,21 +1,32 @@
-# Virtual environment
+# virtualenv
 venv/
+.venv/
 
-# Python cache
+# environment config
+.env
+
+# Python bytecode
 __pycache__/
 *.py[cod]
+*$py.class
 
 # Django stuff
-*.log
-*.pot
-*.pyc
-media/
 staticfiles/
+media/
 
-# IDEs and editors
+# Logs & coverage reports
+*.log
+coverage/
+htmlcov/
+pytest_cache/
+
+# IDEs / editors
 .vscode/
 .idea/
 
-# System files
+# OS cruft
 .DS_Store
 Thumbs.db
+
+# Optional: SQL dumps
+*.sql
